@@ -26,7 +26,7 @@ class Pagination(PageNumberPagination):
 
 class ModelViewSet(generics.GenericAPIView):
     def get(self, request):
-        queryset = self.get_queryset()
+        queryset = self.filter_queryset(self.get_queryset())
         if request.GET.get(u'id'):
             queryset = queryset.filter(id=request.GET.get(u'id'))
 

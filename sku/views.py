@@ -1,7 +1,9 @@
 # coding:utf-8
+from rest_framework import filters
 
 from models import SKU, Goods
 from serializer import SKUSerializer, GoodsSerializer
+from sku.filters import GoodsFilter, JsonOrderingFilter, JsonDjangoFilterBackend
 from utilities import ModelViewSet
 
 
@@ -13,7 +15,10 @@ class SKUViewSet(ModelViewSet):
 class GoodsViewSet(ModelViewSet):
     queryset = Goods.objects.all()
     serializer_class = GoodsSerializer
-
+    filter_backends = (JsonOrderingFilter,
+                       JsonDjangoFilterBackend,
+                       filters.SearchFilter)
+    filter_class = GoodsFilter
 
 
 
