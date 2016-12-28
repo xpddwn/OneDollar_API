@@ -1,7 +1,7 @@
 # coding:utf-8
 from rest_framework import filters
 from django.db.models import Q
-from sku.models import Goods
+from sku.models import Goods, SKU
 import json
 import django_filters
 
@@ -71,3 +71,13 @@ class GoodsFilter(filters.FilterSet):
     class Meta:
         model = Goods
         fields = ['name', 'category', 'price']
+
+
+class SKUFilter(filters.FilterSet):
+    number = django_filters.NumberFilter()
+    start_time = django_filters.DateTimeFromToRangeFilter()
+    end_time = django_filters.DateTimeFromToRangeFilter()
+
+    class Meta:
+        model = SKU
+        fields = ['number', 'start_time', 'end_time']
