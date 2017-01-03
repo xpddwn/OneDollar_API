@@ -64,7 +64,6 @@ class GoodsFilter(filters.FilterSet):
     price = django_filters.RangeFilter()
 
     def filter_name(self, queryset, value):
-        print value
         query = Q(name__contains=value)
         return queryset.filter(query)
 
