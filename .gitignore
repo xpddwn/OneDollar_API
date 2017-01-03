@@ -1,1 +1,4 @@
 .idea/
+*.pyc
+local_settings.py
+local_manage.py
