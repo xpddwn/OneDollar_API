@@ -87,10 +87,10 @@ DATABASES = {
     # }
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'od_test',
+        'NAME': 'backend',
         'USER': 'root',
-        'PASSWORD': 'aptx4869',
-        'HOST': '127.0.0.1',
+        'PASSWORD': '112112',
+        'HOST': '120.27.92.166',
         'PORT': '3306',
     }
 }

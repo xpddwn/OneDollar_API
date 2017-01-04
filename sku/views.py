@@ -1,8 +1,8 @@
 # coding:utf-8
 from rest_framework import filters
-from models import SKU, Goods, User
-from serializer import SKUSerializer, GoodsSerializer, UserSerializer
-from sku.filters import GoodsFilter, JsonOrderingFilter, JsonDjangoFilterBackend, SKUFilter, UserFilter
+from models import SKU, Goods, User, Address
+from serializer import SKUSerializer, GoodsSerializer, UserSerializer, AddressSerializer
+from sku.filters import GoodsFilter, JsonOrderingFilter, JsonDjangoFilterBackend, SKUFilter, UserFilter, AddressFilter
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
@@ -32,3 +32,13 @@ class UserViewSet(ModelViewSet):
                        JsonDjangoFilterBackend,
                        filters.SearchFilter)
     filter_class = UserFilter
+
+
+class AddressViewSet(ModelViewSet):
+    queryset = Address.objects.all()
+    serializer_class = AddressSerializer
+    filter_backends = (JsonOrderingFilter,
+                       JsonDjangoFilterBackend,
+                       filters.SearchFilter)
+    filter_class = AddressFilter
+

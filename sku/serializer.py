@@ -1,13 +1,13 @@
 from rest_framework import serializers
 
-from models import Goods, SKU, User
+from models import Goods, SKU, User, Address
 
 
 class GoodsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Goods
         fields = ('id', 'name', 'introduction', 'category',
-                  'price', 'image_list', 'create_time', 'modified_time')
+                  'price', 'image_list')
 
 
 class SKUSerializer(serializers.ModelSerializer):
@@ -15,8 +15,8 @@ class SKUSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SKU
-        fields = ('id', 'number', 'rating', 'start_time', 'end_time', 'create_time',
-                  'modified_time', 'winner', 'goods')
+        fields = ('id', 'number', 'rating', 'start_time',
+                  'end_time', 'winner', 'goods')
 
     def create(self, validated_data):
         goods = validated_data.pop('goods')
@@ -35,5 +35,11 @@ class SKUSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'phone', 'name', 'Email', 'balance',
-                  'create_time', 'modified_time')
+        fields = ('id', 'phone', 'name', 'Email', 'balance')
+
+
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = ('id', 'user', 'street', 'city', 'state',
+                  'zip_code', 'contact', 'contact_phone')

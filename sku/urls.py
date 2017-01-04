@@ -8,6 +8,7 @@ router = routers.DefaultRouter()
 router.register(r'goods', views.GoodsViewSet)
 router.register(r'sku', views.SKUViewSet)
 router.register(r'user', views.UserViewSet)
+router.register(r'address', views.AddressViewSet)
 
 urlpatterns = [
     # url('^goods/', views.GoodsViewSet.as_view()),

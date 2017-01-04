@@ -1,7 +1,7 @@
 # coding:utf-8
 from rest_framework import filters
 from django.db.models import Q
-from sku.models import Goods, SKU, User
+from sku.models import Goods, SKU, User, Address
 import json
 import django_filters
 
@@ -91,3 +91,11 @@ class UserFilter(filters.FilterSet):
     class Meta:
         model = User
         fields = ['phone', 'id']
+
+
+class AddressFilter(filters.FilterSet):
+    user = django_filters.NumberFilter()
+
+    class Meta:
+        model = Address
+        fields = ['user']
