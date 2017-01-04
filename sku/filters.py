@@ -1,7 +1,7 @@
 # coding:utf-8
 from rest_framework import filters
 from django.db.models import Q
-from sku.models import Goods, SKU
+from sku.models import Goods, SKU, User
 import json
 import django_filters
 
@@ -62,6 +62,7 @@ class GoodsFilter(filters.FilterSet):
     name = django_filters.MethodFilter(action='filter_name')
     category = django_filters.CharFilter()
     price = django_filters.RangeFilter()
+    id = django_filters.NumberFilter()
 
     def filter_name(self, queryset, value):
         query = Q(name__contains=value)
@@ -69,14 +70,24 @@ class GoodsFilter(filters.FilterSet):
 
     class Meta:
         model = Goods
-        fields = ['name', 'category', 'price']
+        fields = ['name', 'category', 'price', 'id']
 
 
 class SKUFilter(filters.FilterSet):
+    id = django_filters.NumberFilter()
     number = django_filters.NumberFilter()
     start_time = django_filters.DateTimeFromToRangeFilter()
     end_time = django_filters.DateTimeFromToRangeFilter()
 
     class Meta:
         model = SKU
-        fields = ['number', 'start_time', 'end_time']
+        fields = ['number', 'start_time', 'end_time', 'id']
+
+
+class UserFilter(filters.FilterSet):
+    phone = django_filters.CharFilter()
+    id = django_filters.NumberFilter()
+
+    class Meta:
+        model = User
+        fields = ['phone', 'id']

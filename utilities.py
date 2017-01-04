@@ -1,7 +1,7 @@
 # coding:utf-8
 from collections import OrderedDict
 
-from rest_framework import generics
+from rest_framework import generics, mixins
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
@@ -24,7 +24,7 @@ class Pagination(PageNumberPagination):
         ]))
 
 
-class ModelViewSet(generics.GenericAPIView):
+class ModelViewSet(generics.GenericAPIView, mixins.CreateModelMixin):
     def get(self, request):
         queryset = self.filter_queryset(self.get_queryset())
         if request.GET.get(u'id'):

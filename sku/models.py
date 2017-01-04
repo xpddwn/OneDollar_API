@@ -25,7 +25,7 @@ class Goods(models.Model):
 
 
 class SKU(models.Model):
-    number = models.IntegerField()
+    number = models.IntegerField(verbose_name="活动期号")
     goods = models.ForeignKey(Goods)
     winner = models.ManyToManyField(User)
     rating = models.IntegerField(verbose_name="最大参与人数")

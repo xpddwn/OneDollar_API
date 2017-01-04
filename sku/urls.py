@@ -5,9 +5,12 @@ from rest_framework import routers
 import views
 
 router = routers.DefaultRouter()
-# router.register(r'sku', SKUViewSet)
+router.register(r'goods', views.GoodsViewSet)
+router.register(r'sku', views.SKUViewSet)
+router.register(r'user', views.UserViewSet)
 
 urlpatterns = [
-    url('^goods/', views.GoodsViewSet.as_view()),
-    url('^sku/', views.SKUViewSet.as_view()),
+    # url('^goods/', views.GoodsViewSet.as_view()),
+    # url('^sku/', views.SKUViewSet.as_view()),
+    # url('^user/', views.UserViewSet.as_view()),
 ] + router.urls
