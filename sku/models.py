@@ -5,7 +5,7 @@ from django.db import models
 
 
 class User(models.Model):
-    phone = models.CharField(max_length=32, null=True)
+    phone = models.CharField(max_length=32, null=True, verbose_name="账号")
     name = models.CharField(max_length=128, null=True)
     Email = models.CharField(max_length=128, null=True)
     balance = models.FloatField(default=0)
@@ -57,7 +57,7 @@ class RechargeInfo(models.Model):
 
 class ShoppingRecord(models.Model):
     user = models.ForeignKey(User, related_name="record")
-    number = models.CharField(max_length=32)
+    number = models.CharField(max_length=32, verbose_name="夺宝号")
     sku = models.ForeignKey(SKU, related_name="record")
     payment = models.FloatField()
     create_time = models.DateTimeField(auto_now_add=True)

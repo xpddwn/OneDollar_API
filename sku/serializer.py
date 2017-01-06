@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from models import Goods, SKU, User, Address, ShoppingRecord
+from models import Goods, SKU, User, Address, ShoppingRecord, RechargeInfo, Image
 
 
 class GoodsSerializer(serializers.ModelSerializer):
@@ -49,3 +49,15 @@ class ShoppingRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingRecord
         fields = ('id', 'user', 'number', 'sku', 'payment', 'create_time')
+
+
+class RechargeInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RechargeInfo
+        fields = ('id', 'user', 'amount', 'channel', 'account', 'create_time')
+
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = ('id', 'url')

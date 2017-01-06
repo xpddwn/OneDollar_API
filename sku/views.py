@@ -1,12 +1,17 @@
 # coding:utf-8
 from rest_framework import filters
-from models import SKU, Goods, User, Address, ShoppingRecord
-from serializer import SKUSerializer, GoodsSerializer, UserSerializer, AddressSerializer, ShoppingRecordSerializer
+from rest_framework.decorators import detail_route, list_route
+
+from models import SKU, Goods, User, Address, ShoppingRecord, RechargeInfo, Image
+from serializer import SKUSerializer, GoodsSerializer, UserSerializer, AddressSerializer, ShoppingRecordSerializer, \
+    RechargeInfoSerializer, ImageSerializer
 from sku.filters import GoodsFilter, JsonOrderingFilter, JsonDjangoFilterBackend, SKUFilter, UserFilter, AddressFilter, \
     ShoppingRecordFilter
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import status
+from django.contrib.auth.hashers import make_password
+
 
 class SKUViewSet(ModelViewSet):
     queryset = SKU.objects.all()
@@ -34,6 +39,57 @@ class UserViewSet(ModelViewSet):
                        filters.SearchFilter)
     filter_class = UserFilter
 
+    def create(self, request, *args, **kwargs):
+        data = dict()
+        data['phone'] = request.data['phone']
+        if User.objects.filter(phone=data['phone']).exists():
+            return Response({'error': "account exist"}, status=status.HTTP_400_BAD_REQUEST)
+        data['name'] = request.data.get('name')
+        data['Email'] = request.data.get('Email')
+        password1 = request.data.get('password1')
+        password2 = request.data.get('password2')
+        if password1 != password2:
+            return Response({'error': "passwords inconsistent"}, status=status.HTTP_400_BAD_REQUEST)
+        if password1 is not None and password2 is not None:
+            serializer = UserSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                user = User.objects.get(id=serializer.data['id'])
+                user.password = make_password(password1, "a", 'pbkdf2_sha256')[22:54]
+                user.save()
+
+                return Response({'error': 0, 'data': serializer.data}, status=status.HTTP_201_CREATED)
+        return Response({'error': "data invalid"}, status=status.HTTP_400_BAD_REQUEST)
+
+    @list_route(methods=['post'], url_path='login')
+    def login(self, request):
+        try:
+            user = User.objects.get(phone=request.data.get('account'))
+            password = make_password(request.data.get('password'), "a", 'pbkdf2_sha256')
+            if user.password == password[22:54]:
+                request.session['user'] = user.id
+                return Response({'error': 0, 'data': 'login success'},
+                                status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'password insistent'},
+                                status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return Response({'error': "account does not exists"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+    @list_route(methods=['post'], url_path='logout')
+    def logout(self, request):
+        try:
+            user = User.objects.get(phone=request.data.get('account'))
+            del request.session['user']
+            return Response({'error': 0, 'data': 'logout success'},
+                            status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({'error': "account does not exists"},
+                            status=status.HTTP_400_BAD_REQUEST)
+        except KeyError:
+            return Response({'error': 'not logged in'})
+
 
 class AddressViewSet(ModelViewSet):
     queryset = Address.objects.all()
@@ -52,6 +108,10 @@ class ShoppingRecordViewSet(ModelViewSet):
                        filters.SearchFilter)
     filter_class = ShoppingRecordFilter
 
+    def _set_number(self, *args, **kwargs):
+
+        return 111
+
     def create(self, request, *args, **kwargs):
         user = User.objects.get(id=request.data['user'])
         sku = SKU.objects.get(id=request.data['sku'])
@@ -60,7 +120,7 @@ class ShoppingRecordViewSet(ModelViewSet):
         data = dict()
         data['user'] = user.id
         data['sku'] = sku.id
-        data['number'] = sku.number
+        data['number'] = self._set_number()
         data['payment'] = sku.goods.price
         serializer = ShoppingRecordSerializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -68,3 +128,19 @@ class ShoppingRecordViewSet(ModelViewSet):
         user.balance -= sku.goods.price
         user.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class RechargeInfoViewSet(ModelViewSet):
+    queryset = RechargeInfo.objects.all()
+    serializer_class = RechargeInfoSerializer
+    filter_backends = (JsonOrderingFilter,
+                       JsonDjangoFilterBackend,
+                       filters.SearchFilter)
+
+
+class ImageViewSet(ModelViewSet):
+    queryset = Image.objects.all()
+    serializer_class = ImageSerializer
+
+
+
