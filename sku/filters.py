@@ -1,7 +1,7 @@
 # coding:utf-8
 from rest_framework import filters
 from django.db.models import Q
-from sku.models import Goods, SKU, User, Address
+from sku.models import Goods, SKU, User, Address, ShoppingRecord
 import json
 import django_filters
 
@@ -99,3 +99,12 @@ class AddressFilter(filters.FilterSet):
     class Meta:
         model = Address
         fields = ['user']
+
+
+class ShoppingRecordFilter(filters.FilterSet):
+    user = django_filters.NumberFilter()
+    create_time = django_filters.DateTimeFromToRangeFilter()
+
+    class Meta:
+        model = ShoppingRecord
+        fields = ['user', 'create_time']

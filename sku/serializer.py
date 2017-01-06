@@ -48,4 +48,4 @@ class AddressSerializer(serializers.ModelSerializer):
 class ShoppingRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingRecord
-        fields = ('id', 'user', 'number', 'sku', 'payment')
+        fields = ('id', 'user', 'number', 'sku', 'payment', 'create_time')
