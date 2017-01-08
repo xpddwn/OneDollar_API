@@ -103,8 +103,9 @@ class AddressFilter(filters.FilterSet):
 
 class ShoppingRecordFilter(filters.FilterSet):
     user = django_filters.NumberFilter()
+    sku = django_filters.NumberFilter()
     create_time = django_filters.DateTimeFromToRangeFilter()
 
     class Meta:
         model = ShoppingRecord
-        fields = ['user', 'create_time']
+        fields = ['user', 'sku', 'create_time']

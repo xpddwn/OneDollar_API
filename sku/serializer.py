@@ -46,6 +46,9 @@ class AddressSerializer(serializers.ModelSerializer):
 
 
 class ShoppingRecordSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    sku = SKUSerializer()
+
     class Meta:
         model = ShoppingRecord
         fields = ('id', 'user', 'number', 'sku', 'payment', 'create_time')
