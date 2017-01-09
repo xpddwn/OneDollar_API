@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from models import Goods, SKU, User, Address, ShoppingRecord, RechargeInfo, Image
+from models import Goods, SKU, User, Address, ShoppingRecord, RechargeInfo, Image, Share
 
 
 class GoodsSerializer(serializers.ModelSerializer):
@@ -64,3 +64,25 @@ class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
         fields = ('id', 'url')
+
+
+class ShareSerializer(serializers.ModelSerializer):
+    user = UserSerializer(required=False)
+    sku = SKUSerializer(required=False)
+
+    class Meta:
+        model = Share
+        fields = ('id',  'sku', 'user', 'image', 'recommend')
+
+    def create(self, validated_data):
+        try:
+            user = validated_data.get('user')
+            sku = validated_data.get('sku')
+            instance = Share(user=User.objects.get(id=user),
+                             sku=SKU.objects.get(id=sku),
+                             recommend=validated_data.get('recommend'),
+                             image=validated_data.get('image'))
+            return instance
+        except Exception as e:
+            print e
+            raise Exception

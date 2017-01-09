@@ -2,14 +2,14 @@
 from rest_framework import filters
 from rest_framework.decorators import detail_route, list_route
 
-from models import SKU, Goods, User, Address, ShoppingRecord, RechargeInfo, Image
+from models import SKU, Goods, User, Address, ShoppingRecord, RechargeInfo, Image, Share
 from serializer import SKUSerializer, GoodsSerializer, UserSerializer, AddressSerializer, ShoppingRecordSerializer, \
-    RechargeInfoSerializer, ImageSerializer
+    RechargeInfoSerializer, ImageSerializer, ShareSerializer
 from sku.filters import GoodsFilter, JsonOrderingFilter, JsonDjangoFilterBackend, SKUFilter, UserFilter, AddressFilter, \
-    ShoppingRecordFilter
+    ShoppingRecordFilter, ShareFilter
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics, mixins
 from django.contrib.auth.hashers import make_password
 
 
@@ -143,4 +143,24 @@ class ImageViewSet(ModelViewSet):
     serializer_class = ImageSerializer
 
 
+class ShareViewSet(ModelViewSet):
+    queryset = Share.objects.all()
+    serializer_class = ShareSerializer
+    filter_backends = (JsonOrderingFilter,
+                       JsonDjangoFilterBackend,
+                       filters.SearchFilter)
+    filter_class = ShareFilter
 
+    def _getimage(self, image):
+        return image
+
+    def create(self, request, *args, **kwargs):
+        if User.objects.filter(id=request.data['user']).exists() \
+                and SKU.objects.filter(id=request.data['sku']).exists():
+            share = Share(user=User.objects.get(id=request.data['user']))
+            share.sku_id = request.data['sku']
+            share.image = self._getimage(request.data['image'])
+            share.recommend = request.data['recommend']
+            share.save()
+            return Response({"error": 0, "result": "success"}, status=status.HTTP_201_CREATED)
+        return Response({"error": "invalid values"}, status=status.HTTP_400_BAD_REQUEST)

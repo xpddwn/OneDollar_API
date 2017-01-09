@@ -73,7 +73,6 @@ class Image(models.Model):
 class Share(models.Model):
     sku = models.ForeignKey(SKU)
     user = models.ForeignKey(User)
-    good = models.ForeignKey(Goods)
     image = models.CharField(max_length=255)
     recommend = models.TextField()
     create_time = models.DateTimeField(auto_now_add=True)

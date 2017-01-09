@@ -10,7 +10,7 @@ router.register(r'sku', views.SKUViewSet)
 router.register(r'user', views.UserViewSet)
 router.register(r'address', views.AddressViewSet)
 router.register(r'record', views.ShoppingRecordViewSet)
-
+router.register(r'share', views.ShareViewSet)
 urlpatterns = [
     # url('^goods/', views.GoodsViewSet.as_view()),
     # url('^sku/', views.SKUViewSet.as_view()),
