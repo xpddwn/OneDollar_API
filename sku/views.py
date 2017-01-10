@@ -68,7 +68,7 @@ class UserViewSet(ModelViewSet):
             password = make_password(request.data.get('password'), "a", 'pbkdf2_sha256')
             if user.password == password[22:54]:
                 request.session['user'] = user.id
-                return Response({'error': 0, 'data': 'login success'},
+                return Response({'error': 0, 'user_id': user.id},
                                 status=status.HTTP_200_OK)
             else:
                 return Response({'error': 'password insistent'},
