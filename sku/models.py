@@ -18,8 +18,7 @@ class Goods(models.Model):
     name = models.CharField(max_length=128)
     introduction = models.TextField()
     category = models.CharField(max_length=64)
-    price = models.FloatField()
-    image_list = models.CharField(max_length=255)
+    image_list = models.CharField(max_length=255, null=True, blank=True)
     create_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
 
@@ -27,12 +26,13 @@ class Goods(models.Model):
 class SKU(models.Model):
     number = models.IntegerField(verbose_name="活动期号")
     goods = models.ForeignKey(Goods)
-    winner = models.ManyToManyField(User)
+    winner = models.ManyToManyField(User, null=True, blank=True)
     rating = models.IntegerField(verbose_name="最大参与人数")
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     create_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
+    price = models.FloatField()
 
 
 class Address(models.Model):
@@ -59,7 +59,8 @@ class ShoppingRecord(models.Model):
     user = models.ForeignKey(User, related_name="record")
     number = models.CharField(max_length=32, verbose_name="夺宝号")
     sku = models.ForeignKey(SKU, related_name="record")
-    payment = models.FloatField()
+    amount = models.IntegerField()
+    status = models.IntegerField(default=0, verbose_name="付款收货状态")
     create_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
 
@@ -77,5 +78,3 @@ class Share(models.Model):
     recommend = models.TextField()
     create_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
-
-

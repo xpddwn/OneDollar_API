@@ -105,10 +105,11 @@ class ShoppingRecordFilter(filters.FilterSet):
     user = django_filters.NumberFilter()
     sku = django_filters.NumberFilter()
     create_time = django_filters.DateTimeFromToRangeFilter()
+    status = django_filters.NumberFilter()
 
     class Meta:
         model = ShoppingRecord
-        fields = ['user', 'sku', 'create_time']
+        fields = ['user', 'sku', 'status', 'create_time']
 
 
 class ShareFilter(filters.FilterSet):

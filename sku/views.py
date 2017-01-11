@@ -9,7 +9,7 @@ from sku.filters import GoodsFilter, JsonOrderingFilter, JsonDjangoFilterBackend
     ShoppingRecordFilter, ShareFilter
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
-from rest_framework import status, generics, mixins
+from rest_framework import status, viewsets, mixins
 from django.contrib.auth.hashers import make_password
 
 
@@ -109,25 +109,50 @@ class ShoppingRecordViewSet(ModelViewSet):
     filter_class = ShoppingRecordFilter
 
     def _set_number(self, *args, **kwargs):
+       return 111
 
-        return 111
+    def _pay(self, user, record):
+        if user.balance - record.sku.price * record.amount < 0:
+            return 1
+        if record.sku.rating <= ShoppingRecord.objects.filter(sku=record.sku).count():
+            return 2
+        user.balance -= record.sku.price * record.amount
+        user.save()
+        return 0
 
     def create(self, request, *args, **kwargs):
         user = User.objects.get(id=request.data['user'])
         sku = SKU.objects.get(id=request.data['sku'])
-        if user.balance - sku.goods.price < 0:
-            return Response({"error": "insufficient balance"}, status=status.HTTP_400_BAD_REQUEST)
-        data = dict()
-        data['user'] = user.id
-        data['sku'] = sku.id
-        data['number'] = self._set_number()
-        data['payment'] = sku.goods.price
-        serializer = ShoppingRecordSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        user.balance -= sku.goods.price
-        user.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        amount = request.data.get('amount')
+        sta = request.data.get('status')
+        if amount is None or amount == 0:
+            return Response({"error": "invalid amount"}, status=status.HTTP_400_BAD_REQUEST)
+        record = ShoppingRecord(user=user, sku=sku, number=self._set_number(),
+                                amount=amount, status=sta)
+        if sta == 1:
+            success = self._pay(user, record)
+            if success == 1:
+                return Response({"error": "insufficient funds"},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if success == 2:
+                return Response({"error": "sold out"}, status=status.HTTP_400_BAD_REQUEST)
+        record.save()
+        return Response(ShoppingRecordSerializer(record).data,
+                        status=status.HTTP_201_CREATED)
+
+    @list_route(methods=['post'], url_path='pay')
+    def pay(self, request):
+        user = User.objects.get(id=request.data.get('user'))
+        record = ShoppingRecord.objects.get(id=request.data.get('record'))
+        success = self._pay(user, record)
+        if success == 1:
+            return Response({"error": "insufficient funds"},
+                            status=status.HTTP_400_BAD_REQUEST)
+        if success == 2:
+            return Response({"error": "sold out"}, status=status.HTTP_400_BAD_REQUEST)
+        record.status = 1
+        record.save()
+        return Response({"error": 0, "data": "succeed"}, status=status.HTTP_200_OK)
 
 
 class RechargeInfoViewSet(ModelViewSet):

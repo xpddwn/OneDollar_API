@@ -6,8 +6,7 @@ from models import Goods, SKU, User, Address, ShoppingRecord, RechargeInfo, Imag
 class GoodsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Goods
-        fields = ('id', 'name', 'introduction', 'category',
-                  'price', 'image_list')
+        fields = ('id', 'name', 'introduction', 'category', 'image_list')
 
 
 class SKUSerializer(serializers.ModelSerializer):
@@ -15,7 +14,7 @@ class SKUSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SKU
-        fields = ('id', 'number', 'rating', 'start_time',
+        fields = ('id', 'number', 'price', 'rating', 'start_time',
                   'end_time', 'winner', 'goods')
 
     def create(self, validated_data):
@@ -51,7 +50,7 @@ class ShoppingRecordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ShoppingRecord
-        fields = ('id', 'user', 'number', 'sku', 'payment', 'create_time')
+        fields = ('id', 'user', 'number', 'sku', 'amount', 'status', 'create_time')
 
 
 class RechargeInfoSerializer(serializers.ModelSerializer):
